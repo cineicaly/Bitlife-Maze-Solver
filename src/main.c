@@ -1,3 +1,4 @@
+#include "../lib/parse.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ char *read_file(const char *file_path)
     }
 
     long file_size = ftell(fp);
-    if (file_size == -1) {
+    if (file_size == -1L) {
         perror("couldn't read file size: ");
         fclose(fp);
         exit(EXIT_FAILURE);
@@ -48,8 +49,8 @@ char *read_file(const char *file_path)
     if (DEBUG_TEST)
         printf("FREAD READ SIZE = %zu\n", read_len);
 
-    if (read_len != file_size) { // fread() doesn't set errno, have to check for
-                                 // ferror() & feof()
+    if (read_len != (size_t)file_size) { // fread() doesn't set errno, have to
+                                         // check for ferror() & feof()
         if (ferror(fp))
             printf("error reading %s\n", file_path);
         else if (feof(fp)) {
@@ -85,7 +86,18 @@ void run(char *file_name)
     if (DEBUG_TEST)
         printf("file_path: %s\n", file_path);
 
-    printf("%s\n", read_file(file_path));
+    char *raw_json = read_file(file_path);
+    if (DEBUG_TEST)
+        printf("%s\n", raw_json);
+
+    maze_struct *maze = malloc(sizeof(maze_struct));
+    if (parse_json(raw_json, maze) != SUCCESS) {
+        free(raw_json);
+        free(maze);
+        printf("Run aborted, failure encountered.\n");
+    }
+
+    free(file_path);
 }
 
 int main(int argc, char *argv[])
