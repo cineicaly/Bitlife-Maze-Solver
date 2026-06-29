@@ -10,9 +10,9 @@
 #define DEBUG_TEST 0
 #endif
 
-char *read_file(char *file_path)
+char *read_file(const char *file_path)
 {
-    FILE *fp = fopen(file_path, "r");
+    FILE *fp = fopen(file_path, "rb");
     if (!fp) {
         perror("open: ");
         exit(EXIT_FAILURE);
@@ -43,24 +43,26 @@ char *read_file(char *file_path)
         exit(EXIT_FAILURE);
     }
 
-    int read_len = fread(input, 1, file_size, fp);
+    size_t read_len = fread(input, 1, file_size, fp);
 
     if (DEBUG_TEST)
-        printf("FREAD READ SIZE = %d\n", read_len);
+        printf("FREAD READ SIZE = %zu\n", read_len);
 
-    if (read_len != file_size) {
+    if (read_len != file_size) { // fread() doesn't set errno, have to check for
+                                 // ferror() & feof()
         if (ferror(fp))
             printf("error reading %s\n", file_path);
         else if (feof(fp)) {
             printf("EOF found\n");
-            printf("number of characters read = %d\n", read_len);
-            printf("input = %.*s\n", read_len, input);
+            printf("number of characters read = %zu\n", read_len);
+            printf("input = %.*s\n", (int)read_len, input);
         }
+        free(input);
         fclose(fp);
         exit(EXIT_FAILURE);
     }
 
-    input[file_size] = '\0';
+    input[read_len] = '\0';
     fclose(fp);
 
     return input;
