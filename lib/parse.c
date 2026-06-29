@@ -22,7 +22,7 @@ int parse_json(const char *raw_json, maze_struct *maze)
 
     if (json == NULL) {
         if (parse_end != NULL) {
-            printf("Error parsing JSON string at: %s\n", parse_end);
+            printf("Error parsing JSON string at:%s\n", parse_end);
         }
         status = STRING_PARSE_ERR;
         goto parsing_error;

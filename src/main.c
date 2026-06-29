@@ -91,10 +91,11 @@ void run(char *file_name)
         printf("%s\n", raw_json);
 
     maze_struct *maze = malloc(sizeof(maze_struct));
-    if (parse_json(raw_json, maze) != SUCCESS) {
+    int status;
+    if ((status = parse_json(raw_json, maze)) != SUCCESS) {
         free(raw_json);
         free(maze);
-        printf("Run aborted, failure encountered.\n");
+        printf("ERR CODE: %d; Run aborted, failure encountered.\n", status);
     }
 
     free(file_path);
