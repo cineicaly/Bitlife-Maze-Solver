@@ -1,11 +1,24 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-enum PARSE_ERROR { SUCCESS, STRING_PARSE_ERR, INT_READ_ERR };
+enum PARSE_ERROR {
+    SUCCESS,
+    STRING_PARSE_ERR,
+    INT_READ_ERR,
+    COORD_INT_READ_ERR,
+    COORD_ARR_ERR,
+    WALL_ARR_ERR,
+    WALL_ARR_SIZE_0_ERR,
+    WALL_ARR_COUNT_ERR,
+    WALL_COORD_ARR_ERR,
+    WALL_COORD_COUNT_ERR,
+    WALL_COORD_NAN_ERR,
+    ALLOC_ERR
+};
 
 typedef struct {
-    int point_A[2];
-    int point_B[2];
+    int x_1, y_1;
+    int x_2, y_2;
 } Wall;
 
 typedef struct maze_struct {

@@ -11,6 +11,46 @@
 #define DEBUG_TEST 0
 #endif
 
+void print_error_msg(int status)
+{
+    printf("ERR CODE: ");
+    switch (status) {
+    case SUCCESS:
+        printf("SUCCESS\n");
+        break;
+    case STRING_PARSE_ERR:
+        printf("STRING_PARSE_ERR\n");
+        break;
+    case INT_READ_ERR:
+        printf("INT_READ_ERR\n");
+        break;
+    case COORD_INT_READ_ERR:
+        printf("COORD_INT_READ_ERR\n");
+        break;
+    case COORD_ARR_ERR:
+        printf("COORD_ARR_ERR\n");
+        break;
+    case WALL_ARR_ERR:
+        printf("WALL_ARR_ERR\n");
+        break;
+    case WALL_ARR_SIZE_0_ERR:
+        printf("WALL_ARR_SIZE_0_ERR\n");
+        break;
+    case WALL_ARR_COUNT_ERR:
+        printf("WALL_ARR_COUNT_ERR\n");
+        break;
+    case WALL_COORD_ARR_ERR:
+        printf("WALL_COORD_ARR_ERR\n");
+        break;
+    case WALL_COORD_COUNT_ERR:
+        printf("WALL_COORD_COUNT_ERR\n");
+        break;
+    case WALL_COORD_NAN_ERR:
+        printf("WALL_COORD_NAN_ERR\n");
+        break;
+    }
+}
+
 char *read_file(const char *file_path)
 {
     FILE *fp = fopen(file_path, "rb");
@@ -91,11 +131,21 @@ void run(char *file_name)
         printf("%s\n", raw_json);
 
     maze_struct *maze = malloc(sizeof(maze_struct));
+    maze->walls = NULL;
+    maze->num_walls = 0;
+
     int status;
     if ((status = parse_json(raw_json, maze)) != SUCCESS) {
         free(raw_json);
+        // if (DEBUG_TEST)
+        //     printf("freeing raw_json worked\n");
+        free(maze->walls);
+        // if (DEBUG_TEST)
+        //     printf("freeing maze->walls worked\n");
         free(maze);
-        printf("ERR CODE: %d; Run aborted, failure encountered.\n", status);
+        // if (DEBUG_TEST)
+        //     printf("freeing maze worked\n");
+        print_error_msg(status);
     }
 
     free(file_path);
