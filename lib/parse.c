@@ -13,8 +13,7 @@ void print_maze(maze_struct *maze)
            maze->player_start_COL);
     printf("enemy start coords = %d, %d\n", maze->enemy_start_ROW,
            maze->enemy_start_COL);
-    printf("escape coords = %d, %d\n", maze->escape_ROW,
-           maze->escape_COL);
+    printf("escape coords = %d, %d\n", maze->escape_ROW, maze->escape_COL);
 
     for (int i = 0; i < maze->num_walls; i++) {
         printf("wall[%d] between (%d, %d) and (%d, %d)\n", i,
@@ -27,6 +26,11 @@ int get_safe_size(cJSON *json, const char *key, int *rows_cols)
 {
     cJSON *item = cJSON_GetObjectItemCaseSensitive(json, key);
     if (cJSON_IsNumber(item)) {
+        if (item->valueint < 3) {
+            printf("Error: '%s' must be at least 3 to have playable space.\n",
+                   key);
+            return INT_READ_ERR;
+        }
         *rows_cols = item->valueint;
         return SUCCESS;
     }
@@ -162,13 +166,23 @@ int parse_json(const char *raw_json, maze_struct *maze)
         goto parsing_error;
     }
 
+    if (maze->player_start_ROW < 0 || maze->player_start_ROW >= maze->rows ||
+        maze->player_start_COL < 0 || maze->player_start_COL >= maze->cols ||
+        maze->enemy_start_ROW < 0 || maze->enemy_start_ROW >= maze->rows ||
+        maze->enemy_start_COL < 0 || maze->enemy_start_COL >= maze->cols) {
+
+        printf("Error: Player or Enemy spawn is outside the grid bounds\n");
+        status = COORD_INT_READ_ERR;
+        goto parsing_error;
+    }
     // Get number of walls
     if ((status = get_safe_walls(json, "walls", &maze->num_walls,
                                  &maze->walls)) != SUCCESS) {
         goto parsing_error;
     }
 
-    print_maze(maze);
+    // print_maze(maze);
+    cJSON_Delete(json);
     return SUCCESS;
 
 parsing_error:

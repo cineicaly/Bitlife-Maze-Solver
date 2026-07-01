@@ -1,6 +1,6 @@
 {
-    "rows": 20,
-    "cols": 21,
+    "rows": 10,
+    "cols": 10,
     "player_start": [8, 4],
     "enemy_start": [2, 8],
     "escape_pos": [8, 0],

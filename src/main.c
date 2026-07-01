@@ -1,11 +1,13 @@
 #include "../lib/parse.h"
 #include "../lib/solver.h"
+#include <bits/time.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
-#define DEBUG
+#undef DEBUG
 #ifdef DEBUG
 #define DEBUG_TEST 1
 #else
@@ -15,7 +17,7 @@
 void print_error_msg(int status)
 {
     if (status == SUCCESS) {
-        printf("SUCCESS\n");
+        printf("PARSING JSON WAS SUCCESSFUL\n");
         return;
     }
 
@@ -139,7 +141,30 @@ void run(char *file_name)
 
     int status;
     status = parse_json(raw_json, maze);
-    solve(maze);
+    print_error_msg(status);
+    if (status == SUCCESS && DEBUG_TEST) {
+        struct timespec start, end;
+        int steps_ = -1;
+
+        clock_gettime(CLOCK_MONOTONIC, &start);
+
+        solve(maze, &steps_);
+
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        double time_taken = (end.tv_sec - start.tv_sec) * 1e9;
+        time_taken = (time_taken + (end.tv_nsec - start.tv_nsec)) * 1e-9;
+        printf("\nSolved in %d steps.\n Solver execution time: %.9f seconds\n",
+               steps_, time_taken);
+    }
+
+    int steps = -1;
+    if (status == SUCCESS && !DEBUG_TEST) {
+        solve(maze, &steps);
+        if (steps == -1) {
+            printf("No solution was found.\n");
+        }
+    }
+
     free(raw_json);
     // if (DEBUG_TEST)
     //     printf("freeing raw_json worked\n");
@@ -149,7 +174,6 @@ void run(char *file_name)
     free(maze);
     // if (DEBUG_TEST)
     //     printf("freeing maze worked\n");
-    print_error_msg(status);
 
     free(file_path);
 }

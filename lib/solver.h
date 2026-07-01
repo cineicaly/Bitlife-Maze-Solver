@@ -8,6 +8,6 @@ typedef struct game_state {
     int parent_idx;
 } game_state;
 
-void solve(maze_struct *maze);
+void solve(maze_struct *maze, int *steps);
 
 #endif
