@@ -3,23 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 void print_maze(maze_struct *maze)
 {
     printf("rows = %d\n", maze->rows);
     printf("cols = %d\n", maze->cols);
     printf("num walls = %d\n", maze->num_walls);
 
-    printf("player start coords = %d, %d\n", maze->player_start[0],
-           maze->player_start[1]);
-    printf("enemy start coords = %d, %d\n", maze->enemy_start[0],
-           maze->enemy_start[1]);
-    printf("escape coords = %d, %d\n", maze->escape_pos[0],
-           maze->escape_pos[1]);
+    printf("player start coords = %d, %d\n", maze->player_start_ROW,
+           maze->player_start_COL);
+    printf("enemy start coords = %d, %d\n", maze->enemy_start_ROW,
+           maze->enemy_start_COL);
+    printf("escape coords = %d, %d\n", maze->escape_ROW,
+           maze->escape_COL);
 
     for (int i = 0; i < maze->num_walls; i++) {
-        printf("wall between (%d, %d) and (%d, %d)\n", maze->walls[i].x_1,
-               maze->walls[i].y_1, maze->walls[i].x_2, maze->walls[i].y_2);
+        printf("wall[%d] between (%d, %d) and (%d, %d)\n", i,
+               maze->walls[i].ROW_1, maze->walls[i].COL_1, maze->walls[i].ROW_2,
+               maze->walls[i].COL_2);
     }
 }
 
@@ -125,10 +125,10 @@ int get_safe_walls(cJSON *json, const char *key, int *num_walls,
                        i);
                 return WALL_COORD_NAN_ERR;
             }
-            (*walls_ptr)[i].x_1 = p1_x->valueint;
-            (*walls_ptr)[i].y_1 = p1_y->valueint;
-            (*walls_ptr)[i].x_2 = p2_x->valueint;
-            (*walls_ptr)[i].y_2 = p2_y->valueint;
+            (*walls_ptr)[i].ROW_1 = p1_x->valueint;
+            (*walls_ptr)[i].COL_1 = p1_y->valueint;
+            (*walls_ptr)[i].ROW_2 = p2_x->valueint;
+            (*walls_ptr)[i].COL_2 = p2_y->valueint;
         }
     }
     return SUCCESS;
@@ -153,12 +153,12 @@ int parse_json(const char *raw_json, maze_struct *maze)
         goto parsing_error;
     }
 
-    if ((status = get_safe_coord(json, "player_start", &maze->player_start[0],
-                                 &maze->player_start[1])) != SUCCESS ||
-        (status = get_safe_coord(json, "enemy_start", &maze->enemy_start[0],
-                                 &maze->enemy_start[1])) != SUCCESS ||
-        (status = get_safe_coord(json, "escape_pos", &maze->escape_pos[0],
-                                 &maze->escape_pos[1])) != SUCCESS) {
+    if ((status = get_safe_coord(json, "player_start", &maze->player_start_ROW,
+                                 &maze->player_start_COL)) != SUCCESS ||
+        (status = get_safe_coord(json, "enemy_start", &maze->enemy_start_ROW,
+                                 &maze->enemy_start_COL)) != SUCCESS ||
+        (status = get_safe_coord(json, "escape_pos", &maze->escape_ROW,
+                                 &maze->escape_COL)) != SUCCESS) {
         goto parsing_error;
     }
 
@@ -175,4 +175,3 @@ parsing_error:
     cJSON_Delete(json);
     return status;
 }
-

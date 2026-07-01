@@ -1,4 +1,5 @@
 #include "../lib/parse.h"
+#include "../lib/solver.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,11 +14,13 @@
 
 void print_error_msg(int status)
 {
+    if (status == SUCCESS) {
+        printf("SUCCESS\n");
+        return;
+    }
+
     printf("ERR CODE: ");
     switch (status) {
-    case SUCCESS:
-        printf("SUCCESS\n");
-        break;
     case STRING_PARSE_ERR:
         printf("STRING_PARSE_ERR\n");
         break;
@@ -135,18 +138,18 @@ void run(char *file_name)
     maze->num_walls = 0;
 
     int status;
-    if ((status = parse_json(raw_json, maze)) != SUCCESS) {
-        free(raw_json);
-        // if (DEBUG_TEST)
-        //     printf("freeing raw_json worked\n");
-        free(maze->walls);
-        // if (DEBUG_TEST)
-        //     printf("freeing maze->walls worked\n");
-        free(maze);
-        // if (DEBUG_TEST)
-        //     printf("freeing maze worked\n");
-        print_error_msg(status);
-    }
+    status = parse_json(raw_json, maze);
+    solve(maze);
+    free(raw_json);
+    // if (DEBUG_TEST)
+    //     printf("freeing raw_json worked\n");
+    free(maze->walls);
+    // if (DEBUG_TEST)
+    //     printf("freeing maze->walls worked\n");
+    free(maze);
+    // if (DEBUG_TEST)
+    //     printf("freeing maze worked\n");
+    print_error_msg(status);
 
     free(file_path);
 }

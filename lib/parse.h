@@ -16,9 +16,9 @@ enum PARSE_ERROR {
     ALLOC_ERR
 };
 
-typedef struct {
-    int x_1, y_1;
-    int x_2, y_2;
+typedef struct Wall {
+    int ROW_1, COL_1;
+    int ROW_2, COL_2;
 } Wall;
 
 typedef struct maze_struct {
@@ -26,9 +26,9 @@ typedef struct maze_struct {
     int cols;
     int num_walls;
 
-    int player_start[2];
-    int enemy_start[2];
-    int escape_pos[2];
+    int player_start_ROW, player_start_COL;
+    int enemy_start_ROW, enemy_start_COL;
+    int escape_ROW, escape_COL;
 
     Wall *walls;
 } maze_struct;
