@@ -7,6 +7,8 @@
 void display_moves(int path_len, game_state queue_arr[], int path_idx[],
                    int escape_r, int escape_c);
 
+void display_path(maze_struct *maze);
+
 bool check_wall(int curr_r, int curr_c, int target_r, int target_c,
                 maze_struct *maze, int idx)
 {
@@ -151,6 +153,7 @@ void solve(maze_struct *maze, int *steps)
 
             *steps = path_len;
             // TODO: display_path()
+            display_path(maze);
             display_moves(path_len, queue_arr, path_idx, escape_r, escape_c);
 
             break;
@@ -196,6 +199,25 @@ void solve(maze_struct *maze, int *steps)
     free(queue_arr);
     free(path_idx);
     return;
+}
+
+void display_path(maze_struct *maze)
+{
+    for (int row = 0; row < maze->rows; row++) {
+        for (int col = 0; col < maze->cols; col++) {
+            if (row == maze->player_start_ROW && col == maze->player_start_COL)
+                printf("P");
+            else if (row == maze->enemy_start_ROW &&
+                     col == maze->enemy_start_COL)
+                printf("C");
+            else if (row == maze->escape_ROW && col == maze->escape_COL)
+                printf("X");
+            else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
 }
 
 void display_moves(int path_len, game_state queue_arr[], int path_idx[],
