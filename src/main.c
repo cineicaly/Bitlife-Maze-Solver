@@ -60,7 +60,7 @@ char *read_file(const char *file_path)
 {
     FILE *fp = fopen(file_path, "rb");
     if (!fp) {
-        perror("open: ");
+        perror("Open JSON");
         exit(EXIT_FAILURE);
     }
 
