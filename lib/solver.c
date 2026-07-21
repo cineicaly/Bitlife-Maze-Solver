@@ -1,13 +1,10 @@
 #include "solver.h"
 #include "parse.h"
+#include "display_maze.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void display_moves(int path_len, game_state queue_arr[], int path_idx[],
-                   int escape_r, int escape_c);
-
-void display_path(maze_struct *maze);
 
 bool check_wall(int curr_r, int curr_c, int target_r, int target_c,
                 maze_struct *maze, int idx)
@@ -153,8 +150,8 @@ void solve(maze_struct *maze, int *steps)
 
             *steps = path_len;
             // TODO: display_path()
-            display_path(maze);
-            display_moves(path_len, queue_arr, path_idx, escape_r, escape_c);
+            play_winning_sequence(maze);
+            show_winning_steps(path_len, queue_arr, path_idx, escape_r, escape_c);
 
             break;
         } else {
@@ -201,43 +198,3 @@ void solve(maze_struct *maze, int *steps)
     return;
 }
 
-void display_path(maze_struct *maze)
-{
-    for (int row = 0; row < maze->rows; row++) {
-        for (int col = 0; col < maze->cols; col++) {
-            if (row == maze->player_start_ROW && col == maze->player_start_COL)
-                printf("P");
-            else if (row == maze->enemy_start_ROW &&
-                     col == maze->enemy_start_COL)
-                printf("C");
-            else if (row == maze->escape_ROW && col == maze->escape_COL)
-                printf("X");
-            else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-}
-
-void display_moves(int path_len, game_state queue_arr[], int path_idx[],
-                   int escape_r, int escape_c)
-{
-    printf("\nWIN FOUND IN %d MOVES: \n", path_len);
-    for (int i = path_len - 1; i > 0; i--) {
-        game_state current_step = queue_arr[path_idx[i]];
-        game_state next_step = queue_arr[path_idx[i - 1]];
-
-        if ((path_len - i) % 10 == 0)
-            printf("\n");
-        if (current_step.player_r > next_step.player_r)
-            printf("Up->");
-        else if (current_step.player_r < next_step.player_r)
-            printf("Down->");
-        else if (current_step.player_c > next_step.player_c)
-            printf("Left->");
-        else if (current_step.player_c < next_step.player_c)
-            printf("Right->");
-    }
-    printf("(%d, %d)!\n\n", escape_r, escape_c);
-}
